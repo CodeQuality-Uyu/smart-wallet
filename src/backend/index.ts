@@ -1,7 +1,7 @@
 // src/backend/index.ts
 // Factory: returns the correct backend implementation based on VITE_BACKEND
 
-import type { IAuthBackend, IBudgetBackend, ICardsBackend, ICategoriesBackend, IExpensesBackend, IMetricsBackend, IPlacesBackend, IRecurringBackend, ISalariesBackend, IMonthClosingsBackend, IProductCategoriesBackend, IBrandsBackend, IProductsBackend, ICategoryLimitsBackend, INotificationsBackend, IReportAttachmentsBackend, IUserPrefsBackend, IMonthAnalysisBackend, IPendingReceiptsBackend, IDashboardWidgetsBackend, IRecortesBackend, IIntegrationsBackend, IGmailBackend } from './types'
+import type { IAuthBackend, IBudgetBackend, ICardsBackend, ICardLocationsBackend, ICategoriesBackend, IExpensesBackend, IMetricsBackend, IPlacesBackend, IRecurringBackend, ISalariesBackend, IMonthClosingsBackend, IProductCategoriesBackend, IBrandsBackend, IProductsBackend, ICategoryLimitsBackend, INotificationsBackend, IReportAttachmentsBackend, IUserPrefsBackend, IMonthAnalysisBackend, IPendingReceiptsBackend, IDashboardWidgetsBackend, IRecortesBackend, IIntegrationsBackend, IGmailBackend, IDailyNotesBackend } from './types'
 
 type BackendType = 'msw' | 'firestore' | 'aws'
 
@@ -10,6 +10,7 @@ const backend = (import.meta.env.VITE_BACKEND ?? 'msw') as BackendType
 // Lazy singletons — imported on first call to avoid bundling unused backends
 let _authBackend: IAuthBackend | null = null
 let _cardsBackend: ICardsBackend | null = null
+let _cardLocationsBackend: ICardLocationsBackend | null = null
 let _categoriesBackend: ICategoriesBackend | null = null
 let _expensesBackend: IExpensesBackend | null = null
 let _metricsBackend: IMetricsBackend | null = null
@@ -31,6 +32,7 @@ let _dashboardWidgetsBackend: IDashboardWidgetsBackend | null = null
 let _recortesBackend: IRecortesBackend | null = null
 let _integrationsBackend: IIntegrationsBackend | null = null
 let _gmailBackend: IGmailBackend | null = null
+let _dailyNotesBackend: IDailyNotesBackend | null = null
 
 export async function getAuthBackend(): Promise<IAuthBackend> {
   if (_authBackend) return _authBackend
@@ -55,6 +57,18 @@ export async function getCardsBackend(): Promise<ICardsBackend> {
     _cardsBackend = mswCardsBackend
   }
   return _cardsBackend
+}
+
+export async function getCardLocationsBackend(): Promise<ICardLocationsBackend> {
+  if (_cardLocationsBackend) return _cardLocationsBackend
+  if (backend === 'firestore') {
+    const { firestoreCardLocationsBackend } = await import('./firestore/cardLocations')
+    _cardLocationsBackend = firestoreCardLocationsBackend
+  } else {
+    const { mswCardLocationsBackend } = await import('./msw/cardLocations')
+    _cardLocationsBackend = mswCardLocationsBackend
+  }
+  return _cardLocationsBackend
 }
 
 export async function getCategoriesBackend(): Promise<ICategoriesBackend> {
@@ -307,6 +321,18 @@ export async function getGmailBackend(): Promise<IGmailBackend> {
     _gmailBackend = mswGmailBackend
   }
   return _gmailBackend
+}
+
+export async function getDailyNotesBackend(): Promise<IDailyNotesBackend> {
+  if (_dailyNotesBackend) return _dailyNotesBackend
+  if (backend === 'firestore') {
+    const { firestoreDailyNotesBackend } = await import('./firestore/dailyNotes')
+    _dailyNotesBackend = firestoreDailyNotesBackend
+  } else {
+    const { mswDailyNotesBackend } = await import('./msw/dailyNotes')
+    _dailyNotesBackend = mswDailyNotesBackend
+  }
+  return _dailyNotesBackend
 }
 
 export { backend as activeBackend }

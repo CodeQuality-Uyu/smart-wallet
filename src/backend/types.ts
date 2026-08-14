@@ -15,6 +15,9 @@ import type {
   PendingReceiptExtractedData,
   Card,
   CreateCardPayload,
+  CardLocation,
+  CreateCardLocationPayload,
+  UpdateCardLocationPayload,
   Category,
   CreateCategoryPayload,
   UpdateCategoryPayload,
@@ -22,6 +25,9 @@ import type {
   Place,
   CreatePlacePayload,
   UpdatePlacePayload,
+  DailyNote,
+  CreateDailyNotePayload,
+  UpdateDailyNotePayload,
   RecurringExpense,
   CreateRecurringPayload,
   UpdateRecurringPayload,
@@ -74,6 +80,9 @@ export type {
   PendingReceiptExtractedData,
   Card,
   CreateCardPayload,
+  CardLocation,
+  CreateCardLocationPayload,
+  UpdateCardLocationPayload,
   Category,
   CreateCategoryPayload,
   UpdateCategoryPayload,
@@ -81,6 +90,9 @@ export type {
   Place,
   CreatePlacePayload,
   UpdatePlacePayload,
+  DailyNote,
+  CreateDailyNotePayload,
+  UpdateDailyNotePayload,
   RecurringExpense,
   CreateRecurringPayload,
   UpdateRecurringPayload,
@@ -169,6 +181,15 @@ export interface ICardsBackend {
   create(payload: CreateCardPayload): Promise<Card>
   update(id: string, payload: Partial<CreateCardPayload>): Promise<Card>
   remove(id: string): Promise<void>
+}
+
+// ─── Card locations / plataformas donde está registrada la tarjeta ──
+
+export interface ICardLocationsBackend {
+  list(cardId: string): Promise<CardLocation[]>
+  create(cardId: string, payload: CreateCardLocationPayload): Promise<CardLocation>
+  update(cardId: string, id: string, payload: UpdateCardLocationPayload): Promise<CardLocation>
+  remove(cardId: string, id: string): Promise<void>
 }
 
 // ─── Categories ───────────────────────────────────────────
@@ -294,6 +315,15 @@ export interface ISalariesBackend {
   list(): Promise<Salary[]>
   create(payload: CreateSalaryPayload): Promise<Salary>
   update(id: string, payload: UpdateSalaryPayload): Promise<Salary>
+  remove(id: string): Promise<void>
+}
+
+// ─── Daily notes ──────────────────────────────────────────
+
+export interface IDailyNotesBackend {
+  list(): Promise<DailyNote[]>
+  create(payload: CreateDailyNotePayload): Promise<DailyNote>
+  update(id: string, payload: UpdateDailyNotePayload): Promise<DailyNote>
   remove(id: string): Promise<void>
 }
 

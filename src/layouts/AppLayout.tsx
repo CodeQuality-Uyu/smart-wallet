@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/metrics',  icon: '📊', label: 'Métricas' },
   { to: '/summary',  icon: '📈', label: 'Resumen' },
   { to: '/recortes', icon: '✂️', label: 'Recortes' },
+  { to: '/notes',    icon: '🗓️', label: 'Notas' },
   { to: '/settings', icon: '⚙️', label: 'Configurar' },
 ]
 

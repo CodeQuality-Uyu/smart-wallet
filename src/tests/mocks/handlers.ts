@@ -11,6 +11,8 @@ import { mockCards } from './data/cards'
 import { mockRecurring } from './data/recurring'
 import { mockMetrics } from './data/metrics'
 import { mockSalaries } from './data/salaries'
+import { mockDailyNotes } from './data/dailyNotes'
+import { mockCardLocations } from './data/cardLocations'
 import { mockBudget } from './data/budget'
 import { mockProductCategoryLimits } from './data/productCategoryLimits'
 import { mockMonthClosings } from './data/monthClosings'
@@ -443,6 +445,44 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
+  // ─── Card locations (plataformas donde está registrada la tarjeta) ──
+  http.get(`${BASE}/cards/:cardId/locations`, ({ params }) =>
+    HttpResponse.json(
+      mockCardLocations.filter((l) => l.cardId === params['cardId'] && l.active !== false),
+    ),
+  ),
+
+  http.post(`${BASE}/cards/:cardId/locations`, async ({ params, request }) => {
+    const body = await request.json() as Record<string, unknown>
+    const now = new Date().toISOString()
+    const created = {
+      ...body,
+      id: crypto.randomUUID(),
+      cardId: params['cardId'] as string,
+      active: true,
+      createdAt: now,
+      updatedAt: now,
+    }
+    mockCardLocations.unshift(created as typeof mockCardLocations[0])
+    return HttpResponse.json(created, { status: 201 })
+  }),
+
+  http.patch(`${BASE}/cards/:cardId/locations/:id`, async ({ params, request }) => {
+    const loc = mockCardLocations.find((l) => l.id === params['id'])
+    if (!loc) return new HttpResponse(null, { status: 404 })
+    const body = await request.json() as Record<string, unknown>
+    Object.assign(loc, body, { updatedAt: new Date().toISOString() })
+    return HttpResponse.json(loc)
+  }),
+
+  http.delete(`${BASE}/cards/:cardId/locations/:id`, ({ params }) => {
+    const loc = mockCardLocations.find((l) => l.id === params['id'])
+    if (!loc) return new HttpResponse(null, { status: 404 })
+    loc.active = false
+    loc.updatedAt = new Date().toISOString()
+    return new HttpResponse(null, { status: 204 })
+  }),
+
   // ─── Recurring ──────────────────────────────────────────
   http.get(`${BASE}/recurring`, () => HttpResponse.json(mockRecurring)),
 
@@ -780,6 +820,34 @@ export const handlers = [
   http.delete(`${BASE}/salaries/:id`, ({ params }) => {
     const idx = mockSalaries.findIndex((s) => s.id === params['id'])
     if (idx !== -1) mockSalaries.splice(idx, 1)
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // ─── Daily notes ─────────────────────────────────────────
+  http.get(`${BASE}/daily-notes`, () =>
+    HttpResponse.json(mockDailyNotes.filter((n) => n.active)),
+  ),
+
+  http.post(`${BASE}/daily-notes`, async ({ request }) => {
+    const body = await request.json() as Record<string, unknown>
+    const now = new Date().toISOString()
+    const created = { ...body, id: crypto.randomUUID(), active: true, createdAt: now, updatedAt: now }
+    mockDailyNotes.unshift(created as typeof mockDailyNotes[0])
+    return HttpResponse.json(created, { status: 201 })
+  }),
+
+  http.patch(`${BASE}/daily-notes/:id`, async ({ request, params }) => {
+    const body = await request.json() as Record<string, unknown>
+    const idx = mockDailyNotes.findIndex((n) => n.id === params['id'])
+    if (idx === -1) return new HttpResponse(null, { status: 404 })
+    mockDailyNotes[idx] = { ...mockDailyNotes[idx], ...body, updatedAt: new Date().toISOString() }
+    return HttpResponse.json(mockDailyNotes[idx])
+  }),
+
+  http.delete(`${BASE}/daily-notes/:id`, ({ params }) => {
+    const idx = mockDailyNotes.findIndex((n) => n.id === params['id'])
+    // Soft delete para reflejar el comportamiento del backend Firestore
+    if (idx !== -1) mockDailyNotes[idx] = { ...mockDailyNotes[idx], active: false, updatedAt: new Date().toISOString() }
     return new HttpResponse(null, { status: 204 })
   }),
 

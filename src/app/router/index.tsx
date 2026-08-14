@@ -71,12 +71,14 @@ const EditExpensePage = lazy(() => import('@/pages/EditExpensePage/EditExpensePa
 const MetricsPage = lazy(() => import('@/pages/MetricsPage/MetricsPage'))
 const SummaryPage = lazy(() => import('@/pages/SummaryPage/SummaryPage'))
 const RecortesPage = lazy(() => import('@/pages/RecortesPage/RecortesPage'))
+const NotesPage = lazy(() => import('@/pages/NotesPage/NotesPage'))
 const RecurringPage = lazy(() => import('@/pages/RecurringPage/RecurringPage'))
 const RecurringDetailPage = lazy(() => import('@/pages/RecurringDetailPage/RecurringDetailPage'))
 const CategoriesPage = lazy(() => import('@/pages/CategoriesPage/CategoriesPage'))
 const PlacesPage = lazy(() => import('@/pages/PlacesPage/PlacesPage'))
 const PlaceDetailPage = lazy(() => import('@/pages/PlaceDetailPage/PlaceDetailPage'))
 const CardsPage = lazy(() => import('@/pages/CardsPage/CardsPage'))
+const CardDetailPage = lazy(() => import('@/pages/CardDetailPage/CardDetailPage'))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage/SettingsPage'))
 const BudgetSettingsPage = lazy(() => import('@/pages/BudgetSettingsPage/BudgetSettingsPage'))
 const MonthClosingPage = lazy(() => import('@/pages/MonthClosingPage/MonthClosingPage'))
@@ -187,6 +189,10 @@ const router = createBrowserRouter([
         element: <SuspenseWrapper><RecortesPage /></SuspenseWrapper>,
       },
       {
+        path: '/notes',
+        element: <SuspenseWrapper><NotesPage /></SuspenseWrapper>,
+      },
+      {
         path: '/settings',
         element: <SettingsLayout />,
         children: [
@@ -197,6 +203,7 @@ const router = createBrowserRouter([
           { path: 'places', element: <SuspenseWrapper><PlacesPage /></SuspenseWrapper> },
           { path: 'places/:id', element: <SuspenseWrapper><PlaceDetailPage /></SuspenseWrapper> },
           { path: 'cards', element: <SuspenseWrapper><CardsPage /></SuspenseWrapper> },
+          { path: 'cards/:id', element: <SuspenseWrapper><CardDetailPage /></SuspenseWrapper> },
           { path: 'budget', element: <SuspenseWrapper><BudgetSettingsPage /></SuspenseWrapper> },
           { path: 'reports', element: <SuspenseWrapper><ReportsPage /></SuspenseWrapper> },
           { path: 'reports/:yearMonth', element: <SuspenseWrapper><MonthClosingPage /></SuspenseWrapper> },

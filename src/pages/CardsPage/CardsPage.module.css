@@ -81,6 +81,11 @@
 }
 .cardDelete:hover { background: rgba(255,80,80,.4); }
 
+.cardActions {
+  display: flex; gap: 6px; align-items: center;
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+
 
 /* form */
 .form {

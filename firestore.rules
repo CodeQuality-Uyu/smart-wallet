@@ -10,6 +10,11 @@ service cloud.firestore {
       // Cards subcollection
       match /cards/{cardId} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
+
+        // Locations — plataformas/servicios donde está registrada la tarjeta
+        match /locations/{locationId} {
+          allow read, write: if request.auth != null && request.auth.uid == uid;
+        }
       }
 
       // Categories subcollection
@@ -34,6 +39,11 @@ service cloud.firestore {
 
       // Salaries subcollection
       match /salaries/{salaryId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // Daily notes subcollection — notas por día (soft delete via active flag)
+      match /dailyNotes/{noteId} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
 

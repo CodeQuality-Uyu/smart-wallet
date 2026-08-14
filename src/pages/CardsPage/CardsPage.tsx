@@ -1,6 +1,7 @@
 // src/pages/CardsPage.tsx
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import { useCards, useCreateCard, useUpdateCard, useDeleteCard } from '@/features/cards/hooks/useCards'
 import type { Card } from '@/types/models'
@@ -56,6 +57,7 @@ function cardStatusClass(type: CardType, styles: Record<string, string>): string
 }
 
 export default function CardsPage(): React.ReactElement {
+  const navigate = useNavigate()
   const { data: cards = [], isLoading } = useCards()
   const { mutateAsync: createCard } = useCreateCard()
   const { mutateAsync: updateCard } = useUpdateCard()
@@ -279,10 +281,10 @@ export default function CardsPage(): React.ReactElement {
               key={card.id}
               className={styles.card}
               style={{ background: cardGradient(card.color) }}
-              onClick={() => { setEditingCard(card); setShowForm(false) }}
+              onClick={() => void navigate(`/settings/cards/${card.id}`)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && (setEditingCard(card), setShowForm(false))}
+              onKeyDown={(e) => e.key === 'Enter' && void navigate(`/settings/cards/${card.id}`)}
             >
               {/* Mobile layout */}
               <div className={styles.cardBadge}>{card.type === CardType.Credit ? '💳' : '💵'}</div>
@@ -301,18 +303,31 @@ export default function CardsPage(): React.ReactElement {
                 <span className={cardStatusClass(card.type, styles as Record<string, string>)}>
                   {cardStatusLabel(card.type)}
                 </span>
-                <button
-                  className={styles.cardDelete}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDeletingId(card.id)
-                    void deleteCard(card.id).finally(() => setDeletingId(null))
-                  }}
-                  disabled={deletingId === card.id}
-                  aria-label="Eliminar tarjeta"
-                >
-                  {deletingId === card.id ? '…' : '✕'}
-                </button>
+                <div className={styles.cardActions}>
+                  <button
+                    className={styles.cardDelete}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setEditingCard(card)
+                      setShowForm(false)
+                    }}
+                    aria-label="Editar tarjeta"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className={styles.cardDelete}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setDeletingId(card.id)
+                      void deleteCard(card.id).finally(() => setDeletingId(null))
+                    }}
+                    disabled={deletingId === card.id}
+                    aria-label="Eliminar tarjeta"
+                  >
+                    {deletingId === card.id ? '…' : '✕'}
+                  </button>
+                </div>
               </div>
               <p className={styles.cardNumber}>
                 {card.lastFour ? `•••• •••• •••• ${card.lastFour}` : '•••• •••• •••• ——'}

@@ -101,6 +101,25 @@ export interface Card extends Timestamps {
 
 export type CreateCardPayload = Omit<Card, 'id' | 'createdAt' | 'updatedAt' | 'active'>
 
+// ─── Card locations / plataformas donde está registrada la tarjeta ──
+// Ej: Netflix, Spotify, MercadoLibre. Subcolección por tarjeta.
+
+export interface CardLocation extends Timestamps {
+  id: string
+  cardId: string
+  name: string
+  amount?: number
+  currency?: Currency
+  frequency?: RecurringFrequency
+  url?: string
+  notes?: string
+  active: boolean
+}
+
+export type CreateCardLocationPayload = Pick<CardLocation, 'name'> &
+  Partial<Pick<CardLocation, 'amount' | 'currency' | 'frequency' | 'url' | 'notes'>>
+export type UpdateCardLocationPayload = Partial<CreateCardLocationPayload>
+
 // ─── Expense ──────────────────────────────────────────────
 
 export interface TicketLine {
@@ -426,6 +445,20 @@ export interface SavingsGoal extends Timestamps {
 
 export type CreateSavingsGoalPayload = Omit<SavingsGoal, 'id' | 'createdAt' | 'updatedAt' | 'savedAmount' | 'status'>
 export type UpdateSavingsGoalPayload = Partial<Omit<CreateSavingsGoalPayload, 'active'>>
+
+// ─── Daily notes ──────────────────────────────────────────
+// Notas libres asociadas a un día concreto (vista calendario).
+// Cada día puede tener varias notas → un documento por nota.
+
+export interface DailyNote extends Timestamps {
+  id: string
+  date: string // YYYY-MM-DD (día al que pertenece la nota)
+  text: string
+  active: boolean
+}
+
+export type CreateDailyNotePayload = Pick<DailyNote, 'date' | 'text'>
+export type UpdateDailyNotePayload = Partial<Pick<DailyNote, 'text'>>
 
 // ─── Month analysis ───────────────────────────────────────
 
